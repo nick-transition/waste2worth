@@ -1,26 +1,29 @@
 <html>
-<div id="chartContainer">
-  <script src="https://d3js.org/d3.v4.min.js"></script>
-  <script src="http://dimplejs.org/dist/dimple.v2.3.0.min.js"></script>
-  <script type="text/javascript">
-    var svg = dimple.newSvg("#chartContainer", 590, 400);
-      d3.tsv("./dcap-data.tsv", function (data) {
-        data = dimple.filterData(data, "Location", [
-          "NY","PA","WI"
-        ]);
-        var myChart = new dimple.chart(svg, data);
-        myChart.setBounds(75, 30, 480, 330);
-        var x = myChart.addCategoryAxis("x", "Location");
-        x.addOrderRule("Location");
-        myChart.addMeasureAxis("y", "Total");
-        myChart.addSeries("Total", dimple.plot.bubble)
-        //y.addOrderRule("Date");
-        //myChart.addMeasureAxis("p", "Unit Sales");
-        //var pies = myChart.addSeries("Channel", dimple.plot.pie);
-        //pies.radius = 20;
-        //myChart.addLegend(180, 10, 360, 20, "right");
-        myChart.draw();
-      });
-  </script>
-</div>
+  <head>
+    <meta charset="utf-8">
+    <title>Visualization</title>
+    <link rel="stylesheet" href="scatter.css" charset="utf-8">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="container">
+      <div class="blog-header">
+        <h1 class="blog-title"> Bitchin' Dairy Graph</h1>
+      </div>
+
+      <div class="row">
+        <div id="chart" class="blog-post">
+          <div id="scatter" >
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+    <script src="scatter.js" charset="utf-8"></script>
+  </body>
 </html>
