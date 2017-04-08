@@ -1,0 +1,5 @@
+scenario,location,proc1,proc1,proc3,Total
+scenario1,NY,.4,.2,.1,.5
+scenario2,NY,.3,.3,.1,.7
+scenario3,WI,.2,.4,.1,.7
+scenario2,WI,.2,.2,.1,.5

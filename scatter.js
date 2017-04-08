@@ -40,7 +40,16 @@ d3.tsv("dcap-data.tsv", function(data) {
   var xAxis = d3.svg.axis()
       .scale(x)
       .orient("bottom")
-      .tickSize(-height);
+      .tickSize(-height)
+      .tickValues(data.reduce((acc,d,i)=>{
+        if(i ==0 || acc.indexOf(d['File name'])){
+          acc.push(d['File name']);
+          console.log(d['File name'])
+          return acc;
+        } else {
+          return acc
+        }
+      },[]));
 
   var yAxis = d3.svg.axis()
       .scale(y)
