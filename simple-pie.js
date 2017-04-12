@@ -21,17 +21,17 @@ var svg = d3.select("svg");
     radius = Math.min(width, height) / 2,
     g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-var color = d3.scaleOrdinal(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+var color = d3.scale.ordinal().range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 
-var pie = d3.pie()
+var pie = d3.layout.pie()
     .sort(null)
     .value(function(d) { return d.amount; });
 
-var path = d3.arc()
+var path = d3.svg.arc()
     .outerRadius(radius - 10)
     .innerRadius(0);
 
-var label = d3.arc()
+var label = d3.svg.arc()
     .outerRadius(radius - 40)
     .innerRadius(radius - 40);
 
@@ -50,11 +50,6 @@ d3.csv("testData.csv", function(d) {
   arc.append("path")
       .attr("d", path)
       .attr("fill", function(d) { return color(d.data.name); });
-
-  arc.append("text")
-      .attr("transform", function(d) { return "translate(" + label.centroid(d) + ")"; })
-      .attr("dy", "0.35em")
-      .text(function(d) { return d.data.name; });
 
 
 });

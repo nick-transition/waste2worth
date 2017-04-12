@@ -53,6 +53,7 @@ var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
+    .attr("class","bounding-box")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 // add the tooltip area to the webpage
@@ -189,6 +190,24 @@ d3.tsv("dcap-data.tsv", function(error, data) {
       .attr("y", 9)
       .attr("dy", ".35em")
       .style("text-anchor", "end")
-      .text(function(d) { return d})
+      .text(function(d) { return d;})
+
+  data.forEach(datum => {
+
+   var arc = svg.selectAll(".arc" + datum.scenario.replace(/\s/g,''))
+     .data(pie(datum.pieData))
+     .enter().append("g")
+       .attr("class", "arc"+datum.scenario.replace(/\s/g,''))
+       .attr("cx", datum => {
+         return xPosition(datum.scenario);
+       })
+       .attr("cy", yMap(datum));
+
+   arc.append("path")
+       .attr("d", path)
+       .attr("fill", function(d) { return color(d.data.name); });
+
+  });
+
 
 });
