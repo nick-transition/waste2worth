@@ -2,28 +2,18 @@ var margin = {top: 20, right: 40, bottom: 100, left: 100},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
-// var someData = [
-//   {
-//     name:"scenario1",
-//     amount:1
-//   },{
-//     name:"scenario2",
-//     amount:.7
-//   },{
-//     name:"scenario3",
-//     amount:.6
-//   }
-// ];
+var pieColors = ["#52e5e5", "#1a3e66", "#e59c52", "#e5529c", "#e55252", "#3b907c"];
 
-var color = d3.scale.ordinal().range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+var colorPie = d3.scale.ordinal().range(pieColors);
 
 var pie = d3.layout.pie()
     .sort(null)
     .value(function(d) { return d.amount; });
 
 var path = d3.svg.arc()
-    .outerRadius(50)
-    .innerRadius(0);
+    .outerRadius(20)
+    .innerRadius(7);
+
 
 /*
  * value accessor - returns the value to encode for a given data object.
@@ -110,7 +100,7 @@ d3.tsv("dcap-data.tsv", function(error, data) {
   var xAxis = d3.svg.axis()
       .scale(x)
       .orient("bottom")
-  yScale.domain([0.5, 1.2]);
+  yScale.domain([0.6, 1.2]);
 
   // x-axis
   svg.append("g")
@@ -133,7 +123,7 @@ d3.tsv("dcap-data.tsv", function(error, data) {
       .attr("class", "label")
       .attr("transform", "rotate(-90)")
       .attr("y", 6)
-      .attr("dy", "-2.1em")
+      .attr("dy", "-2.4em")
       .style("text-anchor", "end")
       .text("Total kg CO2eq / kg FPCM");
 
@@ -156,13 +146,19 @@ d3.tsv("dcap-data.tsv", function(error, data) {
       .attr("cy", yMap)
       .style("fill", function(d) { return color(cValue(d));})
       .on("mouseover", function(d) {
+        console.log(d)
+          var iniText = "<strong>"+d.scenario+"</strong>"+"<br/>Location: "+d.location+"<br/>Total: "+d.Total
+          var toolText = d.pieData.reduce((string,elem,i) => {
+            //console.log(elem)
+            string += "<br/>"+elem.name+": "+parseFloat(elem.amount)/d.Total
+            return string
+          }, iniText)
+          console.log(toolText)
           tooltip.transition()
                .duration(200)
-               .style("opacity", .9);
-          tooltip.html(d["scenario"] + "<br/> (" + xValue(d)
-	        + ", " + yValue(d) + ")")
-               .style("left", (d3.event.pageX + 5) + "px")
-               .style("top", (d3.event.pageY - 28) + "px");
+               .style("opacity", .8);
+          tooltip.html(toolText);
+
       })
       .on("mouseout", function(d) {
           tooltip.transition()
@@ -175,7 +171,7 @@ d3.tsv("dcap-data.tsv", function(error, data) {
       .data(color.domain())
     .enter().append("g")
       .attr("class", "legend")
-      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+      .attr("transform", function(d, i) { return "translate(-250," + i * 20 + ")"; });
 
   // draw legend colored rectangles
   legend.append("rect")
@@ -192,22 +188,44 @@ d3.tsv("dcap-data.tsv", function(error, data) {
       .style("text-anchor", "end")
       .text(function(d) { return d;})
 
-  data.forEach(datum => {
+  var slices = data[0].pieData.map(e => e.name);
 
-   var arc = svg.selectAll(".arc" + datum.scenario.replace(/\s/g,''))
+  // draw pie chart legend
+  var pieLegend = svg.selectAll(".pie-legend")
+      .data(slices)
+    .enter().append("g")
+      .attr("class", "pie-legend")
+      .attr("transform", function(d, i) { return "translate(-70," + (i * 20) + ")"; });
+
+  pieLegend.append("rect")
+      .attr("x", width - 18)
+      .attr("width", 18)
+      .attr("height", 18)
+      .style("fill", (d,i) => pieColors[i]);
+
+  // draw legend text
+  pieLegend.append("text")
+      .attr("x", width - 24)
+      .attr("y", 9)
+      .attr("dy", ".35em")
+      .style("text-anchor", "end")
+      .text(function(d) { return d;})
+
+  data.forEach(datum => {
+   g = svg.append("g").attr("transform", "translate(" + xPosition(datum.scenario) + "," + yMap(datum) + ")");
+   var arc = g.selectAll(".arc" + datum.scenario.replace(/\s/g,''))
      .data(pie(datum.pieData))
      .enter().append("g")
        .attr("class", "arc"+datum.scenario.replace(/\s/g,''))
-       .attr("cx", datum => {
-         return xPosition(datum.scenario);
-       })
-       .attr("cy", yMap(datum));
 
    arc.append("path")
        .attr("d", path)
-       .attr("fill", function(d) { return color(d.data.name); });
+       .attr("fill", function(d) { return colorPie(d.data.name); })
+       .style("opacity", .8);;
 
   });
+
+
 
 
 });

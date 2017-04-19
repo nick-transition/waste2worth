@@ -37,10 +37,12 @@ var label = d3.svg.arc()
 
 d3.csv("testData.csv", function(d) {
   d.population = +d.population;
+
   return d;
 }, function(error, data) {
   if (error) throw error;
-  console.log(data)
+  
+
   var arc = g.selectAll(".arc")
     .data(pie(someData))
     .enter().append("g")
